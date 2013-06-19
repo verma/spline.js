@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<canvas id="myCanvas" width="800" height="500" style="border:1px solid #eeeeee;">
+Your browser does not support the HTML5 canvas tag.
+</canvas>
+
+<script src="../src/Spline.js"></script>
+<script>
+
+var c=document.getElementById("myCanvas");
+var ctx=c.getContext("2d");
+
+var w = 800, h = 500;
+
+var ks = [0.000000, 0.000000, 0.000000, 0.061111, 0.336111, 0.611111, 0.611111, 0.611111];
+var cp = [-0.036275, -0.032279, 0.027298, 0.026297, 0.053298, 0.035275]
+
+var s = new SPLINE.CubicBSpline(ks, cp), tl = s.totalDuration();
+
+// draw timeline
+var step = tl / 5;
+
+ctx.font = "15px Arial";
+ctx.fillStyle = "#ddd";
+ctx.strokeStyle = "#ddd";
+ctx.moveTo(25, h/2); ctx.lineTo(w - 25, h/2); ctx.stroke();
+
+ctx.beginPath();
+for(var i = 0, il = 5 ; i < il ; i ++) {
+	var off = Math.floor(25 + (i * (w - 50) / (il - 1)));
+
+	ctx.moveTo(off, h/2 - 10); ctx.lineTo(off, h/2 + 10); 
+	ctx.fillText((i * tl / 4).toFixed(2), off-12, h/2+25);
+}
+ctx.stroke();
+
+
+var first = true;
+ctx.beginPath();
+for(var t = 0, tl = s.totalDuration() ; t < tl ; t += 0.001) {
+	var y = s.valueForTime(t);
+
+	var x = 25 + (t*(w-50)/tl);
+	y = h/2 + (y * 1000);
+
+	console.log(t, x, y);
+	if (first) {
+		ctx.moveTo(x, y);
+		first = false;
+	}
+	else {
+		ctx.lineTo(x, y);
+	}
+}
+
+ctx.strokeStyle = "#880000";
+ctx.stroke();
+
+
+</script>
+
+</body>
+</html>
+
